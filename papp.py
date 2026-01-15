@@ -57,7 +57,12 @@ def get_data():
             {"name": "Brazil", "views": 98000, "engagement": 5.1, "growth": 8},
             {"name": "United Kingdom", "views": 85000, "engagement": 3.9, "growth": 5},
             {"name": "Germany", "views": 72000, "engagement": 4.5, "growth": 10}
-        ]
+        ],
+        "engagement_speedometer": {
+            "months": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+            "rates": [2.5, 3.8, 4.2, 3.5, 5.1, 6.2, 5.8, 6.5, 7.8, 8.2, 7.5, 8.5],
+            "dates": ["Jan 15, 2023", "Feb 22, 2023", "Mar 10, 2023", "Apr 05, 2023", "May 18, 2023", "Jun 20, 2023", "Jul 12, 2023", "Aug 30, 2023", "Sep 14, 2023", "Oct 09, 2023", "Nov 21, 2023", "Dec 25, 2023"]
+        }
     }
     return jsonify(data)
 
