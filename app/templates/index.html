@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>SocialSpace | Analytics Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Map Libraries -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap/dist/css/jsvectormap.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/jsvectormap/dist/js/jsvectormap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsvectormap/dist/maps/world.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <div id="auth-overlay" class="auth-overlay">
+        <!-- ... (Keep auth overlay as is) ... -->
+        <div id="step-login" class="auth-card">
+            <div class="brand" style="position: static; margin-bottom: 20px; font-size: 2rem;">SocialSpace</div>
+            <h2>Welcome Back</h2>
+            <p>Login to access your creator insights</p>
+            <div class="input-group">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Password" required>
+            </div>
+            <button class="primary-btn" onclick="goToOnboarding()">Next</button>
+        </div>
+
+        <div id="step-onboarding" class="auth-card" style="display: none;">
+            <h2>Choose Your Domain</h2>
+            <p>Select the niches that best describe your content</p>
+
+            <div class="domain-grid">
+                <div class="domain-item" onclick="toggleDomain(this)">Lifestyle</div>
+                <div class="domain-item" onclick="toggleDomain(this)">Tech & Gaming</div>
+                <div class="domain-item" onclick="toggleDomain(this)">Education</div>
+                <div class="domain-item" onclick="toggleDomain(this)">Fitness</div>
+                <div class="domain-item" onclick="toggleDomain(this)">Fashion</div>
+                <div class="domain-item" onclick="toggleDomain(this)">Cooking</div>
+                <div class="domain-item" onclick="toggleDomain(this)">Travel</div>
+                <div class="domain-item" onclick="toggleDomain(this)">Finance</div>
+                <div class="domain-item" onclick="toggleDomain(this)">Art & Design</div>
+            </div>
+
+            <div class="auth-footer">
+                <button class="skip-btn" onclick="skipToDiscovery()">Skip</button>
+                <button class="primary-btn" onclick="finishAuth()">Finish</button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="top-nav">
+        <div class="nav-container">
+            <div class="brand">SocialSpace</div>
+            <ul class="nav-links">
+                <li id="nav-overview" class="active" onclick="switchTab('overview')">Overview</li>
+                <li id="nav-reports" onclick="switchTab('reports')">Reports</li>
+                <li id="nav-audience" onclick="switchTab('audience')">Audience</li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="dashboard-wrapper">
+        <header class="page-header">
+            <h1 id="main-title">Analytics Dashboard</h1>
+            <p id="main-desc">Track your social media performance over time</p>
+        </header>
+
+        <div id="view-overview" class="tab-content active">
+            <!-- ... (Keep overview content) ... -->
+            <style>
+                .interactive-card {
+                    cursor: pointer;
+                    transition: transform 0.2s;
+                }
+
+                .interactive-card:active {
+                    transform: scale(0.98);
+                }
+            </style>
+            <div class="stats-grid">
+                <div class="card glow-teal interactive-card" onclick="updatePerformanceGraph('Engagement')">
+                    <div class="card-header">
+                        <small>Total Engagement</small>
+                        <span id="trend-engagement" class="trend-pill up">↗ 12.5%</span>
+                    </div>
+                    <h2 id="stat-engagement">284.8K</h2>
+                    <p class="card-subtitle">Increased from last period</p>
+                </div>
+                <div class="card glow-orange interactive-card" onclick="updatePerformanceGraph('Reach')">
+                    <div class="card-header">
+                        <small>Total Reach</small>
+                        <span id="trend-reach" class="trend-pill up">↗ 8.3%</span>
+                    </div>
+                    <h2 id="stat-reach">1.3M</h2>
+                    <p class="card-subtitle">Increased from last period</p>
+                </div>
+                <div class="card glow-purple interactive-card" onclick="updatePerformanceGraph('Followers')">
+                    <div class="card-header">
+                        <small>Follower Growth</small>
+                        <span id="trend-followers" class="trend-pill up">↗ 23.1%</span>
+                    </div>
+                    <h2 id="stat-followers">15.4K</h2>
+                    <p class="card-subtitle">Increased from last period</p>
+                </div>
+                <div class="card glow-pink interactive-card" onclick="updatePerformanceGraph('Interactions')">
+                    <div class="card-header">
+                        <small>Total Interactions</small>
+                        <span id="trend-interactions" class="trend-pill down">↘ 2.4%</span>
+                    </div>
+                    <h2 id="stat-interactions">89.3K</h2>
+                    <p class="card-subtitle">Decreased from last period</p>
+                </div>
+            </div>
+
+            <div class="dual-grid">
+                <div class="chart-card glass">
+                    <div class="chart-header">
+                        <div class="header-left">
+                            <h3>Performance Trends: <span id="active-type">Static</span></h3>
+                            <div class="time-toggle">
+                                <button class="tgl-btn active" onclick="updateTimeframe('daily')">Daily</button>
+                                <button class="tgl-btn" onclick="updateTimeframe('weekly')">Weekly</button>
+                                <button class="tgl-btn" onclick="updateTimeframe('monthly')">Monthly</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="canvas-holder">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card glass">
+                    <h2>Content Performance</h2>
+                    <div class="canvas-holder">
+                        <canvas id="contentChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-reports" class="tab-content">
+            <!-- ... (Keep reports content) ... -->
+            <div class="dual-grid" style="margin-bottom: 60px;">
+                <div class="glass report-side">
+                    <div class="card-header">
+                        <h3>Top Performing Posts</h3>
+                    </div>
+                    <ul class="post-list" id="top-posts-container"></ul>
+                </div>
+
+                <div class="glass report-side">
+                    <div class="card-header">
+                        <h3>Best Posting Times</h3>
+                        <small>Audience activity by hour/day</small>
+                    </div>
+
+                    <div class="heatmap-wrapper">
+                        <div class="time-labels" id="time-labels"></div>
+                        <div class="day-labels">
+                            <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+                        </div>
+                        <div class="heatmap-container" id="heatmap"></div>
+                    </div>
+
+                    <div class="heatmap-legend">
+                        <span>Less</span>
+                        <div class="legend-dots">
+                            <span class="l-dot"></span><span class="l-dot"></span>
+                            <span class="l-dot active"></span><span class="l-dot active"></span>
+                        </div>
+                        <span>More</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEW: Collaboration Section -->
+            <div class="full-width-card glass" style="margin-top: 25px;">
+                <div class="card-header">
+                    <h3>Collaboration Opportunities</h3>
+                    <p class="card-subtitle">Connect with creators who match your audience and growth stats</p>
+                </div>
+                <div class="collab-grid" id="collab-container"
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <!-- Collab cards injected here -->
+                </div>
+            </div>
+        </div>
+
+        <div id="view-audience" class="tab-content">
+            <!-- NEW: Audience Map & Languages -->
+            <div class="dual-grid" style="gap: 20px; margin-bottom: 60px;">
+                <div class="card glass">
+                    <h3>Audience Regions</h3>
+                    <div id="world-map" style="width: 100%; height: 400px;"></div>
+                </div>
+                <div class="card glass">
+                    <h3>Audience Language</h3>
+                    <div id="language-list" class="language-list"
+                        style="margin-top: 15px; height: 400px; overflow-y: auto; padding-right: 5px;"></div>
+                </div>
+            </div>
+
+            <div class="full-width-card glass">
+                <div class="card-header">
+                    <h3>Top Locations</h3>
+                    <p class="card-subtitle"></p>
+                </div>
+                <div class="location-table-wrapper">
+                    <table class="stats-table">
+                        <thead>
+                            <tr>
+                                <th>Country</th>
+                                <th>Total Views</th>
+                                <th>Engagement Rate</th>
+                                <th>Growth</th>
+                            </tr>
+                        </thead>
+                        <tbody id="location-details-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>

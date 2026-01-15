@@ -1,0 +1,197 @@
+:root {
+    --bg-dark: #080a0f;
+    --card-bg: #11151c;
+    --border: #21262d;
+    --accent: #00f2ea;
+    --text-dim: #8a8f98;
+}
+
+body {
+    background: var(--bg-dark);
+    color: white;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+/* Header & Branding Layout */
+.main-header {
+    display: flex;
+    align-items: center;
+    padding: 0 40px;
+    background: #11151c;
+    border-bottom: 1px solid var(--border);
+    height: 70px;
+}
+
+.logo {
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin-right: auto;
+    /* Pushes nav to the center/right */
+    color: white;
+}
+
+/* Top Nav: Platforms */
+.platform-nav {
+    display: flex;
+    gap: 30px;
+}
+
+.nav-item {
+    color: var(--text-dim);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+}
+
+.nav-item:hover,
+.nav-item.active {
+    color: var(--accent);
+}
+
+/* Sub Nav: Domains */
+.domain-nav {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding: 20px;
+    background: #0d1117;
+}
+
+.domain-nav button {
+    background: #1e2533;
+    border: 1px solid var(--border);
+    color: white;
+    padding: 10px 24px;
+    border-radius: 25px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.domain-nav button:hover {
+    border-color: var(--accent);
+    background: #252d3d;
+}
+
+/* Welcome Screen */
+.centered {
+    height: 50vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.centered h1 {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+/* Vertical Creator Grid (Horizontal Scroll Style) */
+.creator-grid {
+    display: flex;
+    gap: 20px;
+    padding: 20px 40px 60px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+.creator-grid::-webkit-scrollbar {
+    display: none;
+    /* Chrome/Safari */
+}
+
+/* Immersive Vertical Cards */
+.creator-card {
+    position: relative;
+    min-width: 300px;
+    height: 520px;
+    border-radius: 28px;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    scroll-snap-align: start;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.creator-card:hover {
+    transform: scale(1.02);
+}
+
+.card-content {
+    padding: 25px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.platform-tag {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+}
+
+.creator-name {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0 0 5px 0;
+}
+
+.famous-work {
+    font-size: 0.95rem;
+    color: #d1d1d1;
+    margin-bottom: 20px;
+}
+
+/* Card Footer Stats & Plus Button */
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stats {
+    display: flex;
+    gap: 15px;
+    font-size: 0.9rem;
+    color: white;
+}
+
+.plus-btn {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.4rem;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: background 0.3s;
+}
+
+.plus-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.loading-text {
+    width: 100%;
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--text-dim);
+}
