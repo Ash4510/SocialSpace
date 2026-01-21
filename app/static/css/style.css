@@ -470,18 +470,29 @@ body {
 
 .skip-btn {
     flex: 1;
-    background: transparent;
+    margin-top: 24px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.03);
     border: 1px solid var(--border-color);
     color: var(--text-dim);
     border-radius: 12px;
     font-weight: 600;
+    font-size: 1rem;
     cursor: pointer;
-    transition: 0.3s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(5px);
 }
 
 .skip-btn:hover {
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--text-main);
+    background: rgba(0, 242, 234, 0.1);
+    border-color: var(--teal);
+    color: #fff;
+    box-shadow: 0 0 15px rgba(0, 242, 234, 0.2);
+    transform: translateY(-2px);
+}
+
+.skip-btn:active {
+    transform: scale(0.98);
 }
 
 /* --- TOP NAVIGATION --- */
