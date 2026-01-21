@@ -208,25 +208,3 @@ def chat():
         "Try using trending audio to boost your Reach further."
     ]
     return jsonify({"response": random.choice(responses)})
-
-
-# --- VIRAL ALERTS & HEATMAP API ---
-
-@bp.route('/api/viral-status')
-def get_viral_status():
-    """
-    Check if the latest post is trending (1.2x) or viral (1.5x).
-    Returns severity level and engagement metrics.
-    """
-    status = data_service.check_viral_status()
-    return jsonify(status)
-
-
-@bp.route('/api/heatmap-data')
-def get_heatmap_data():
-    """
-    Return 7x24 grid of simulated active_users data for heatmap.
-    """
-    data = data_service.get_heatmap_data()
-    return jsonify(data)
-
