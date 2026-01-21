@@ -97,9 +97,14 @@ function handleLogin() {
         // Simulate API delay (1.5s)
         setTimeout(() => {
             document.getElementById('step-login').style.display = 'none';
-            document.getElementById('step-onboarding').style.display = 'block';
+            document.getElementById('step-platform').style.display = 'block';
         }, 1500);
     }
+}
+
+function goToDomainSelection() {
+    document.getElementById('step-platform').style.display = 'none';
+    document.getElementById('step-onboarding').style.display = 'block';
 }
 
 /**
@@ -126,6 +131,15 @@ function finishAuth() {
     setTimeout(() => {
         overlay.style.display = 'none';
         initDashboard();
+
+        // Update Profile Name
+        const usernameInput = document.getElementById('username');
+        const username = (usernameInput && usernameInput.value) ? usernameInput.value : "Guest";
+        const navName = document.getElementById('nav-username-display');
+        const ddName = document.getElementById('dd-username-display');
+
+        if (navName) navName.innerText = username;
+        if (ddName) ddName.innerText = username;
     }, 500);
 }
 
@@ -652,11 +666,11 @@ document.addEventListener('DOMContentLoaded', () => {
     domainItems.forEach(item => {
         item.addEventListener('click', () => {
             setTimeout(() => {
-                if(trigger) {
+                if (trigger) {
                     trigger.style.display = 'flex';
                     setTimeout(() => { trigger.style.opacity = '1'; }, 10);
                 }
-            }, 1000); 
+            }, 1000);
         });
     });
 
@@ -664,11 +678,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const heatMapLogic = {
         getBestTime: (dayInput) => {
             const day = dayInput.toLowerCase();
-            if (day.includes("monday") || day === "m") 
+            if (day.includes("monday") || day === "m")
                 return "On <b class='highlight'>Mondays</b>, your peak activity is early at <b class='highlight'>7:00 AM</b>. There's another small window at <b class='highlight'>10:00 PM</b>.";
-            if (day.includes("sunday") || day === "s") 
+            if (day.includes("sunday") || day === "s")
                 return "Your <b class='highlight'>Sunday</b> is incredible! Audience activity is high almost all day, specifically from <b class='highlight'>1:00 PM straight through to 11:00 PM</b>.";
-            if (day.includes("friday") || day === "f") 
+            if (day.includes("friday") || day === "f")
                 return "On <b class='highlight'>Fridays</b>, aim for the mid-afternoon surge around <b class='highlight'>3:00 PM</b>.";
             return "Looking at your overall heatmap, <b class='highlight'>Sunday</b> is your strongest day. Your most consistent daily window across the week is late night, specifically <b class='highlight'>11:00 PM</b>.";
         },
@@ -732,7 +746,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // 1. Target Audience Logic
             if (text.includes("audience") || text.includes("target")) {
                 response = `Based on your <b class='highlight'>${domain}</b> metrics, here is your profile:<br><br>${data.audience}`;
-            } 
+            }
             // 2. Heatmap Logic
             else if (text.includes("time") || text.includes("when") || text.includes("post") || text.includes("day")) {
                 if (text.includes("worst") || text.includes("bad")) {
@@ -740,11 +754,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     response = heatMapLogic.getBestTime(text);
                 }
-            } 
+            }
             // 3. Content Suggestion Logic
             else if (text.includes("content") || text.includes("upload") || text.includes("suggest")) {
                 response = `Based on your <b class='highlight'>${domain}</b> niche and current stats: <br><br>${data.content}`;
-            } 
+            }
             else {
                 response = `I'm your <b class='highlight'>${domain}</b> assistant. You can ask me about your <b class='highlight'>Target Audience</b>, <b class='highlight'>Best Posting Times</b>, or <b class='highlight'>Content Ideas</b>.`;
             }
@@ -758,5 +772,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sendBtn) sendBtn.onclick = sendMessage;
     if (userInput) {
         userInput.onkeypress = (e) => { if (e.key === 'Enter') sendMessage(); };
+    }
+});
+
+/* --- PROFILE DROPDOWN LOGIC --- */
+window.toggleProfileMenu = function () {
+    const dropdown = document.getElementById('profile-dropdown');
+    if (dropdown) dropdown.classList.toggle('show');
+};
+
+window.addEventListener('click', function (e) {
+    const container = document.getElementById('profile-trigger');
+    const dropdown = document.getElementById('profile-dropdown');
+
+    // If click is outside the container, hide the dropdown
+    if (dropdown && container && !container.contains(e.target)) {
+        dropdown.classList.remove('show');
     }
 });
