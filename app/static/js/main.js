@@ -22,6 +22,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Immersive Effects
     initParallax();
     initMagneticButton();
+
+    // AI Chatbot Selectors (Integrated)
+    const sendBtn = document.getElementById('ai-send-msg');
+    const userInput = document.getElementById('ai-user-input');
+
+    if (sendBtn) sendBtn.onclick = sendMessage;
+    if (userInput) {
+        userInput.onkeypress = (e) => { if (e.key === 'Enter') sendMessage(); };
+    }
 });
 
 function initParallax() {
@@ -32,13 +41,9 @@ function initParallax() {
         const x = e.clientX / window.innerWidth;
         const y = e.clientY / window.innerHeight;
 
-        // Move background slightly opposite to mouse
-        const moveX = (0.5 - x) * 20; // 20px max movement
+        const moveX = (0.5 - x) * 20; 
         const moveY = (0.5 - y) * 20;
 
-        // Update background position (preserving the grid size/repeat)
-        // We only want to shift the radial gradients, but CSS multiple backgrounds are hard to target individually via JS standard style.
-        // Easiest way: shift the whole container's background position.
         overlay.style.backgroundPosition = `calc(50% + ${moveX}px) calc(50% + ${moveY}px)`;
     });
 }
@@ -48,7 +53,7 @@ function initMagneticButton() {
     if (!btn) return;
 
     btn.addEventListener('mousemove', (e) => {
-        if (btn.classList.contains('btn-disabled')) return; // No magnetic if disabled
+        if (btn.classList.contains('btn-disabled')) return; 
 
         const rect = btn.getBoundingClientRect();
         const x = e.clientX - rect.left;
@@ -60,8 +65,6 @@ function initMagneticButton() {
         const deltaX = (x - centerX) / centerX;
         const deltaY = (y - centerY) / centerY;
 
-        // Tilt Effect: Rotate X (up/down) and Y (left/right)
-        // Max tilt: 15deg
         btn.style.transform = `perspective(1000px) rotateX(${-deltaY * 10}deg) rotateY(${deltaX * 10}deg) scale(1.05)`;
     });
 
@@ -73,7 +76,6 @@ function initMagneticButton() {
 function validateLoginInputs() {
     if (!userIn || !passIn || !loginBtn) return;
 
-    // Logic: Both > 3 chars
     const isValid = userIn.value.length > 3 && passIn.value.length > 3;
 
     if (isValid) {
@@ -90,11 +92,9 @@ function handleLogin() {
     const pass = passIn.value;
 
     if (user.length > 3 && pass.length > 3) {
-        // Start Loading Animation
         loginBtn.innerHTML = '<div class="btn-loader"></div>';
-        loginBtn.disabled = true; // Prevent double click
+        loginBtn.disabled = true; 
 
-        // Simulate API delay (1.5s)
         setTimeout(() => {
             document.getElementById('step-login').style.display = 'none';
             document.getElementById('step-onboarding').style.display = 'block';
@@ -102,26 +102,26 @@ function handleLogin() {
     }
 }
 
-/**
- * REDIRECT LOGIC: Redirects user to the secondary Discovery UI
- * This triggers when the user clicks 'Skip'
- */
 function skipToDiscovery() {
     const usernameInput = document.getElementById('username');
     const username = (usernameInput && usernameInput.value) ? usernameInput.value : "Guest";
-
-    // Redirects browser to the /discovery route handled by Flask
     window.location.href = `/discovery?user=${encodeURIComponent(username)}`;
 }
 
 function toggleDomain(element) {
     element.classList.toggle('selected');
+    
+    // Automatically show chatbot trigger when a domain is picked
+    const trigger = document.getElementById('chatbot-trigger');
+    setTimeout(() => {
+        if(trigger) {
+            trigger.classList.add('visible');
+        }
+    }, 1000);
 }
 
 function finishAuth() {
     const overlay = document.getElementById('auth-overlay');
-
-    // Smooth transition to main analytical dashboard
     overlay.style.opacity = '0';
     setTimeout(() => {
         overlay.style.display = 'none';
@@ -130,33 +130,44 @@ function finishAuth() {
 }
 
 /**
- * TAB SWITCHING
+ * TAB SWITCHING (UPDATED WITH HEADER LOGIC)
  */
 function switchTab(tabName) {
     document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
     document.getElementById('nav-' + tabName).classList.add('active');
 
-    document.querySelectorAll('.tab-content').forEach(view => view.classList.remove('active'));
-    document.getElementById('view-' + tabName).classList.add('active');
+    // Handle visibility and Flex for AI tab
+    document.querySelectorAll('.tab-content').forEach(view => {
+        view.classList.remove('active');
+        view.style.display = 'none';
+    });
+    
+    const targetView = document.getElementById('view-' + tabName);
+    if (targetView) {
+        targetView.classList.add('active');
+        // AI needs Flex for its layout, others use block
+        targetView.style.display = (tabName === 'ai') ? 'flex' : 'block';
+    }
 
     const mainTitle = document.getElementById('main-title');
     const mainDesc = document.getElementById('main-desc');
 
-    // Keep titles strictly analytical as requested
     if (tabName === 'overview') {
         mainTitle.innerText = "Analytics Dashboard";
         mainDesc.innerText = "Track your social media performance over time";
         if (performanceChart) performanceChart.resize();
     } else if (tabName === 'reports') {
-        mainTitle.innerText = "Reports";
+        mainTitle.innerText = "Performance Reports";
         mainDesc.innerText = "Deep dive into content metrics and audience behavior";
     } else if (tabName === 'audience') {
         mainTitle.innerText = "Audience Insights";
         mainDesc.innerText = "Global reach and geographic distribution";
-        // Render map when tab becomes visible to ensure correct size
         setTimeout(() => {
             renderAudienceMap();
         }, 100);
+    } else if (tabName === 'ai') {
+        mainTitle.innerText = "AI Strategy Insights";
+        mainDesc.innerText = "AI-powered content optimization and growth strategy";
     }
 }
 
@@ -177,12 +188,8 @@ async function initDashboard() {
         renderTopPosts();
         renderLocationTable();
         renderCollaborations();
-
-        // New Dashboard Functions
         renderAudienceMap();
         renderLanguages();
-
-        console.log("Rendering Gauge Section...");
         renderGaugeSection();
 
     } catch (error) {
@@ -269,9 +276,6 @@ function renderContentChart() {
     });
 }
 
-/**
- * UPDATES & HELPERS
- */
 function updateTimeframe(timeframe) {
     currentTimeframe = timeframe;
     document.querySelectorAll('.tgl-btn').forEach(btn => {
@@ -375,7 +379,6 @@ function renderTopPosts() {
 
 function renderStats() {
     if (!apiData.stats) return;
-
     const fields = ['engagement', 'reach', 'followers', 'interactions'];
 
     fields.forEach(field => {
@@ -383,11 +386,9 @@ function renderStats() {
         if (data) {
             const statEl = document.getElementById(`stat-${field}`);
             const trendEl = document.getElementById(`trend-${field}`);
-
             if (statEl) statEl.innerText = data.value;
             if (trendEl) {
                 trendEl.innerText = data.trend;
-                // Update color/arrow based on trend content
                 if (data.trend.includes('+') || data.trend.includes('↗')) {
                     trendEl.className = 'trend-pill up';
                 } else {
@@ -439,20 +440,20 @@ function renderCollaborations() {
     if (!container || !apiData.collaborators) return;
 
     container.innerHTML = apiData.collaborators.map(collab => `
-        <div class="collab-card" style="background: #1e2533; padding: 20px; border-radius: 12px; border: 1px solid #2e3644; text-align: center; transition: transform 0.2s; cursor: pointer;">
+        <div class="collab-card" style="background: #1e2533; padding: 20px; border-radius: 12px; border: 1px solid #2e3644; text-align: center;">
             <img src="${collab.img}" alt="${collab.name}" style="width: 80px; height: 80px; border-radius: 50%; margin-bottom: 15px; border: 2px solid #00f2ea;">
             <h4 style="margin: 0 0 5px; font-size: 1.1rem; color: #fff;">${collab.name}</h4>
             <p style="color: #8a8f98; font-size: 0.9rem; margin: 0 0 15px;">${collab.niche} • ${collab.followers}</p>
             <div style="background: rgba(16, 185, 129, 0.1); color: #10b981; display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-bottom: 15px;">
                 ${collab.match}% Match
             </div>
-            <button style="width: 100%; padding: 10px; background: linear-gradient(135deg, #00f2ea, #a855f7); border: none; border-radius: 8px; color: white; font-weight: 600; cursor: pointer; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">Connect</button>
+            <button style="width: 100%; padding: 10px; background: linear-gradient(135deg, #00f2ea, #a855f7); border: none; border-radius: 8px; color: white; font-weight: 600;">Connect</button>
         </div>
     `).join('');
 }
 
 /**
- * ENGAGEMENT WIDGET LOGIC
+ * GAUGE LOGIC
  */
 let widgetHelper = {
     gaugeCtx: null,
@@ -463,107 +464,45 @@ let widgetHelper = {
 };
 
 function renderGaugeSection() {
-    // 1. Init Canvases
     const gCanvas = document.getElementById('engagementGauge');
-
     if (gCanvas) widgetHelper.gaugeCtx = gCanvas.getContext('2d');
-
-    // 2. Load Data for default key
     switchWidgetPeriod('last_7d');
 }
 
 function switchWidgetPeriod(key) {
     if (!apiData.engagement_widget || !apiData.engagement_widget[key]) return;
-
     widgetHelper.currentKey = key;
     const data = apiData.engagement_widget[key];
-
-    // Update UI Tabs
     document.querySelectorAll('.w-tab').forEach(b => b.classList.remove('active'));
-    const btn = document.getElementById(`wt-${key}`);
-    if (btn) btn.classList.add('active');
-
-    // Update Text Details
+    if (document.getElementById(`wt-${key}`)) document.getElementById(`wt-${key}`).classList.add('active');
     updateWidgetText(data);
-
-    // Animate Gauge
     animateGauge(data.value);
 }
 
 function updateWidgetText(data) {
     const valEl = document.getElementById('w-value');
     const statusTextEl = document.getElementById('w-status-text');
-    const benchmarkEl = document.getElementById('w-benchmark');
-    const trendEl = document.getElementById('w-trend');
-    const dateEl = document.getElementById('w-date');
-    const insightEl = document.getElementById('w-insight');
-    const actionEl = document.getElementById('w-action');
-
     if (valEl) valEl.innerText = data.value + '%';
-
-    // Status Logic
-    let statusColor = '#facc15';
-    if (data.status === 'excellent') statusColor = '#10b981';
-    else if (data.status === 'average') statusColor = '#facc15';
-    else if (data.status === 'poor') statusColor = '#f43f5e';
-
-    if (statusTextEl) {
-        statusTextEl.innerText = data.status_label;
-        statusTextEl.style.color = statusColor;
-    }
-
-    if (benchmarkEl) benchmarkEl.innerText = data.benchmark_text;
-
-    // Trend
-    if (trendEl) {
-        const arrow = data.trend_dir === 'up' ? '↑' : '↓';
-        // "↑ 0.8% · Reels drove growth"
-        trendEl.innerText = `${arrow} ${data.trend_value}% · ${data.trend_reason}`;
-        trendEl.className = `trend-pill ${data.trend_dir}`;
-    }
-
-    if (dateEl) dateEl.innerText = data.date_range;
-    if (insightEl) insightEl.innerText = data.insight;
-
-    if (actionEl && data.action_hint) {
-        actionEl.innerText = data.action_hint;
-    }
+    if (statusTextEl) statusTextEl.innerText = data.status_label;
+    if (document.getElementById('w-benchmark')) document.getElementById('w-benchmark').innerText = data.benchmark_text;
+    if (document.getElementById('w-date')) document.getElementById('w-date').innerText = data.date_range;
 }
 
 function animateGauge(target) {
     widgetHelper.targetValue = target;
     const startTime = performance.now();
     const startVal = widgetHelper.currentValue;
-    const duration = 1200; // Slower, smoother
-
     function loop(now) {
         const elapsed = now - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        const ease = 1 - Math.pow(1 - progress, 3); // Cubic ease out
-
-        const current = startVal + (target - startVal) * ease;
+        const progress = Math.min(elapsed / 1200, 1);
+        const current = startVal + (target - startVal) * progress;
         widgetHelper.currentValue = current;
-
-        // 1. Draw Gauge Arc (Background + Value)
         drawGauge(current);
-
-        // 2. Rotate DOM Needle (CSS)
-        const maxVal = 10;
-        const clamped = Math.min(current, maxVal);
-        const ratio = clamped / maxVal;
-        const angle = -90 + (ratio * 180); // -90deg to +90deg
-
+        const angle = -90 + ((current / 10) * 180);
         const needle = document.getElementById('gauge-needle');
-        if (needle) {
-            // Anchor at bottom (-100% Y translate), Pivot at Top:85px
-            needle.style.transform = `translate(-50%, -100%) rotate(${angle}deg)`;
-        }
-
-        if (progress < 1) {
-            widgetHelper.animationFrame = requestAnimationFrame(loop);
-        }
+        if (needle) needle.style.transform = `translate(-50%, -100%) rotate(${angle}deg)`;
+        if (progress < 1) widgetHelper.animationFrame = requestAnimationFrame(loop);
     }
-
     if (widgetHelper.animationFrame) cancelAnimationFrame(widgetHelper.animationFrame);
     widgetHelper.animationFrame = requestAnimationFrame(loop);
 }
@@ -572,191 +511,79 @@ function drawGauge(value) {
     const ctx = widgetHelper.gaugeCtx;
     const canvas = document.getElementById('engagementGauge');
     if (!ctx || !canvas) return;
-
-    const width = canvas.width;
-    const height = canvas.height;
-
-    // Adjusted Architecture for "Pivot A towards B"
-    const cx = width / 2;
-    const cy = 85;  // Moved UP (approx center)
-    const radius = 75; // Slightly reduced to fit top gap
-
-    ctx.clearRect(0, 0, width, height);
-
-    // 1. Background Track (Deep Glass)
+    const cx = canvas.width / 2;
+    const cy = 85;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.beginPath();
-    ctx.arc(cx, cy, radius, Math.PI, 2 * Math.PI);
+    ctx.arc(cx, cy, 75, Math.PI, 2 * Math.PI);
     ctx.lineWidth = 16;
-    ctx.lineCap = 'round';
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
     ctx.stroke();
-
-    // 2. Dynamic "Cool to Hot" Gradient
-    const maxVal = 10;
-    const clampedVal = Math.min(value, maxVal);
-    const ratio = clampedVal / maxVal;
-    const endAngle = Math.PI + (Math.PI * ratio);
-
-    const grad = ctx.createLinearGradient(0, 0, width, 0);
-
-    // Cool -> Hot Logic
-    if (value < 4) {
-        // Ice Cool (Cyan -> Blue)
-        grad.addColorStop(0, '#22d3ee');
-        grad.addColorStop(1, '#3b82f6');
-        setGlowColor('rgba(34, 211, 238, 0.3)'); // Cyan Glow
-    } else if (value < 7) {
-        // Electric (Blue -> Purple)
-        grad.addColorStop(0, '#3b82f6');
-        grad.addColorStop(1, '#a855f7');
-        setGlowColor('rgba(168, 85, 247, 0.3)'); // Purple Glow
-    } else {
-        // Hot (Purple -> Neon Pink)
-        grad.addColorStop(0, '#a855f7');
-        grad.addColorStop(1, '#ec4899');
-        setGlowColor('rgba(236, 72, 153, 0.4)'); // Pink Glow
-    }
-
-    // 3. Value Arc
     ctx.beginPath();
-    ctx.arc(cx, cy, radius, Math.PI, endAngle);
-    ctx.lineWidth = 16;
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = grad;
-
-    // Extra Neon Glow on the Arc itself
-    ctx.shadowBlur = 15;
-    ctx.shadowColor = grad;
+    ctx.arc(cx, cy, 75, Math.PI, Math.PI + (Math.PI * (value / 10)));
+    ctx.strokeStyle = '#a855f7';
     ctx.stroke();
-
-    // Reset Shadow
-    ctx.shadowBlur = 0;
 }
 
-function setGlowColor(color) {
-    const section = document.querySelector('.gauge-section');
-    if (section) {
-        // Dynamic drop-shadow on the container
-        section.style.filter = `drop-shadow(0 0 20px ${color})`;
-    }
+/**
+ * AI CHATBOT KNOWLEDGE & MESSAGING
+ */
+const heatMapLogic = {
+    getBestTime: (dayInput) => {
+        const day = dayInput.toLowerCase();
+        if (day.includes("monday") || day === "m") return "On <b class='highlight'>Mondays</b>, peak at <b class='highlight'>7:00 AM</b>.";
+        if (day.includes("sunday") || day === "s") return "Your <b class='highlight'>Sunday</b> is incredible! <b class='highlight'>1:00 PM to 11:00 PM</b>.";
+        return "<b class='highlight'>Sunday</b> is your strongest day.";
+    },
+    getWorstTime: () => "Your <b class='highlight'>worst times</b> are <b class='highlight'>Tue/Wed (4AM-8AM)</b>."
+};
+
+const domainKnowledge = {
+    "Finance": { content: "Market Wrap-up Reels.", audience: "Young Professionals (24-35)." },
+    "Fashion": { content: "Weekly Outfit Rotation reel.", audience: "Gen Z Trend-seekers." },
+    "Tech & Gaming": { content: "Spec-comparison shorts.", audience: "Tech Enthusiasts." },
+    "Lifestyle": { content: "Day in the life reel.", audience: "Women aged 18-30." },
+    "General": { content: "Short-form vertical video.", audience: "General Content Consumers." }
+};
+
+function getSelectedDomain() {
+    const selectedEl = document.querySelector('.domain-item.selected');
+    return selectedEl ? selectedEl.textContent.trim() : "General";
 }
-document.addEventListener('DOMContentLoaded', () => {
-    const trigger = document.getElementById('chatbot-trigger');
-    const windowAi = document.getElementById('chat-window');
-    const sendBtn = document.getElementById('send-msg');
-    const userInput = document.getElementById('user-input');
-    const chatMessages = document.getElementById('chat-messages');
 
-    // --- VISIBILITY LOGIC ---
-    const domainItems = document.querySelectorAll('.domain-item');
-    domainItems.forEach(item => {
-        item.addEventListener('click', () => {
-            setTimeout(() => {
-                if(trigger) {
-                    trigger.style.display = 'flex';
-                    setTimeout(() => { trigger.style.opacity = '1'; }, 10);
-                }
-            }, 1000); 
-        });
-    });
+function sendMessage() {
+    const userInput = document.getElementById('ai-user-input');
+    const chatMessages = document.getElementById('ai-chat-messages');
+    const originalText = userInput.value.trim();
+    if (originalText === "") return;
 
-    // --- HEATMAP LOGIC ---
-    const heatMapLogic = {
-        getBestTime: (dayInput) => {
-            const day = dayInput.toLowerCase();
-            if (day.includes("monday") || day === "m") 
-                return "On <b class='highlight'>Mondays</b>, your peak activity is early at <b class='highlight'>7:00 AM</b>. There's another small window at <b class='highlight'>10:00 PM</b>.";
-            if (day.includes("sunday") || day === "s") 
-                return "Your <b class='highlight'>Sunday</b> is incredible! Audience activity is high almost all day, specifically from <b class='highlight'>1:00 PM straight through to 11:00 PM</b>.";
-            if (day.includes("friday") || day === "f") 
-                return "On <b class='highlight'>Fridays</b>, aim for the mid-afternoon surge around <b class='highlight'>3:00 PM</b>.";
-            return "Looking at your overall heatmap, <b class='highlight'>Sunday</b> is your strongest day. Your most consistent daily window across the week is late night, specifically <b class='highlight'>11:00 PM</b>.";
-        },
-        getWorstTime: () => {
-            return "Your <b class='highlight'>worst times</b> (the black zones) are <b class='highlight'>Tuesday and Wednesday mornings between 4:00 AM and 8:00 AM</b>, and <b class='highlight'>Saturday late night</b>. Avoid posting during these gaps as engagement is nearly zero.";
-        }
-    };
+    const userDiv = document.createElement('div');
+    userDiv.className = 'message user';
+    userDiv.textContent = originalText;
+    chatMessages.appendChild(userDiv);
 
-    // --- DOMAIN KNOWLEDGE (Content & Target Audience) ---
-    const domainKnowledge = {
-        "Finance": {
-            content: "Upload <b class='highlight'>Market Wrap-up Reels</b>. Your audience saves content 40% more when it includes actionable tips.",
-            audience: "Your target audience consists of <b class='highlight'>Young Professionals (24-35)</b> and <b class='highlight'>First-time Investors</b> looking for wealth-building strategies. They value transparency and data over hype."
-        },
-        "Fashion": {
-            content: "Your reach is peaking on <b class='highlight'>Get Ready With Me videos</b>. Try a Weekly Outfit Rotation reel.",
-            audience: "Your target audience is <b class='highlight'>Gen Z and Millennial Trend-seekers</b> interested in sustainable fashion and capsule wardrobes. They engage most with high-aesthetic, fast-paced editing."
-        },
-        "Tech & Gadgets": {
-            content: "High engagement on <b class='highlight'>spec-comparison shorts</b>. Upload a Top 3 hidden features video.",
-            audience: "Your target audience is <b class='highlight'>Tech Enthusiasts</b> and <b class='highlight'>Early Adopters</b>. They look for unbiased reviews and 'Easter Eggs' in new software or hardware."
-        },
-        "Lifestyle": {
-            content: "Followers love <b class='highlight'>vlog-style content</b>. Upload a Day in the life reel.",
-            audience: "Your target audience is primarily <b class='highlight'>Women aged 18-30</b> looking for aesthetic inspiration, productivity hacks, and relatable daily struggles."
-        },
-        "General": {
-            content: "Upload <b class='highlight'>short-form vertical video</b> as your analytics show 25% higher reach on video.",
-            audience: "Your current target audience is <b class='highlight'>General Content Consumers</b>. To grow faster, try narrowing your focus to a specific sub-niche based on your top-performing post."
-        }
-    };
+    userInput.value = "";
+    chatMessages.scrollTop = chatMessages.scrollHeight;
 
-    function getSelectedDomain() {
-        const selectedEl = document.querySelector('.domain-item.selected');
-        return selectedEl ? selectedEl.textContent.trim() : "General";
-    }
+    setTimeout(() => {
+        const aiDiv = document.createElement('div');
+        aiDiv.className = 'message ai';
+        const domain = getSelectedDomain();
+        const data = domainKnowledge[domain] || domainKnowledge["General"];
+        const text = originalText.toLowerCase();
 
-    if (trigger && windowAi) {
-        trigger.onclick = () => windowAi.classList.toggle('active');
-    }
+        let response = "";
+        if (text.includes("audience")) response = data.audience;
+        else if (text.includes("time")) response = text.includes("worst") ? heatMapLogic.getWorstTime() : heatMapLogic.getBestTime(text);
+        else if (text.includes("content")) response = data.content;
+        else response = `I'm your assistant. Ask about Audience or Timing.`;
 
-    function sendMessage() {
-        const text = userInput.value.trim().toLowerCase();
-        if (text === "") return;
-
-        const userDiv = document.createElement('div');
-        userDiv.className = 'message user';
-        userDiv.textContent = userInput.value.trim();
-        chatMessages.appendChild(userDiv);
-
-        userInput.value = "";
+        aiDiv.innerHTML = response;
+        chatMessages.appendChild(aiDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
+    }, 800);
+}
 
-        setTimeout(() => {
-            const aiDiv = document.createElement('div');
-            aiDiv.className = 'message ai';
-            const domain = getSelectedDomain();
-            const data = domainKnowledge[domain] || domainKnowledge["General"];
-            let response = "";
-
-            // 1. Target Audience Logic
-            if (text.includes("audience") || text.includes("target")) {
-                response = `Based on your <b class='highlight'>${domain}</b> metrics, here is your profile:<br><br>${data.audience}`;
-            } 
-            // 2. Heatmap Logic
-            else if (text.includes("time") || text.includes("when") || text.includes("post") || text.includes("day")) {
-                if (text.includes("worst") || text.includes("bad")) {
-                    response = heatMapLogic.getWorstTime();
-                } else {
-                    response = heatMapLogic.getBestTime(text);
-                }
-            } 
-            // 3. Content Suggestion Logic
-            else if (text.includes("content") || text.includes("upload") || text.includes("suggest")) {
-                response = `Based on your <b class='highlight'>${domain}</b> niche and current stats: <br><br>${data.content}`;
-            } 
-            else {
-                response = `I'm your <b class='highlight'>${domain}</b> assistant. You can ask me about your <b class='highlight'>Target Audience</b>, <b class='highlight'>Best Posting Times</b>, or <b class='highlight'>Content Ideas</b>.`;
-            }
-
-            aiDiv.innerHTML = response;
-            chatMessages.appendChild(aiDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }, 800);
-    }
-
-    if (sendBtn) sendBtn.onclick = sendMessage;
-    if (userInput) {
-        userInput.onkeypress = (e) => { if (e.key === 'Enter') sendMessage(); };
-    }
-});
+window.clearChat = () => {
+    document.getElementById('ai-chat-messages').innerHTML = '<div class="message ai">New session started.</div>';
+};
