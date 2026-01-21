@@ -6,6 +6,7 @@
     <title>SocialSpace | Analytics Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <!-- Map Libraries -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap/dist/css/jsvectormap.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/jsvectormap/dist/js/jsvectormap.min.js"></script>
@@ -19,28 +20,14 @@
     <div id="auth-overlay" class="auth-overlay">
         <!-- Logo at the top -->
         <div id="step-login" class="auth-card">
-            <!-- Logo at the top -->
-            <div class="logo-container">
-                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="SocialSpace Logo" class="login-logo">
+            <div class="brand" style="position: static; margin-bottom: 20px; font-size: 2rem;">SocialSpace</div>
+            <h2>Welcome Back</h2>
+            <p>Login to access your creator insights</p>
+            <div class="input-group">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Password" required>
             </div>
-
-            <h2 class="login-title">Welcome</h2>
-            <p class="login-subtitle">Login to access your creator insights</p>
-
-            <div class="input-group floating-group">
-                <span class="input-icon">👤</span>
-                <input type="text" id="username" placeholder=" " required>
-                <label for="username">Username</label>
-                <span class="input-border-glow"></span>
-            </div>
-
-            <div class="input-group floating-group">
-                <span class="input-icon">🔒</span>
-                <input type="password" id="password" placeholder=" " required>
-                <label for="password">Password</label>
-                <span class="input-border-glow"></span>
-            </div>
-            <button id="btn-login" class="primary-btn" onclick="handleLogin()">Next</button>
+            <button class="primary-btn" onclick="goToOnboarding()">Next</button>
         </div>
 
         <div id="step-onboarding" class="auth-card" style="display: none;">
@@ -57,10 +44,10 @@
                 <div class="domain-item" onclick="toggleDomain(this)">Travel</div>
                 <div class="domain-item" onclick="toggleDomain(this)">Finance</div>
                 <div class="domain-item" onclick="toggleDomain(this)">Art & Design</div>
+                <div class="domain-item" onclick="toggleDomain(this)">Other</div>
             </div>
 
             <div class="auth-footer">
-                <button class="skip-btn" onclick="skipToDiscovery()">Skip</button>
                 <button class="primary-btn" onclick="finishAuth()">Finish</button>
             </div>
         </div>
@@ -74,6 +61,43 @@
                 <li id="nav-reports" onclick="switchTab('reports')">Reports</li>
                 <li id="nav-audience" onclick="switchTab('audience')">Audience</li>
             </ul>
+
+            <div class="user-profile-container" id="profile-trigger">
+                <div class="user-info" onclick="toggleProfileMenu()">
+                    <span class="user-name" id="nav-username-display">Guest</span>
+
+                    <div class="nav-avatar-placeholder">
+                        <svg width="24" height="24" viewBox="0 0 24 24"
+                            style="display: block; width: 20px; height: 20px;">
+                            <path
+                                d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                        </svg>
+                    </div>
+
+                    <i class="ph ph-caret-down" style="color: #888; font-size: 12px;"></i>
+                </div>
+
+                <div class="profile-dropdown" id="profile-dropdown">
+                    <div class="dropdown-header">
+                        <p class="dd-name" id="dd-username-display">Guest</p>
+                    </div>
+
+                    <a href="#" class="dropdown-item">
+                        <i class="ph ph-gear"></i> Settings
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <i class="ph ph-question"></i> Help Center
+                    </a>
+
+                    <div class="dropdown-divider" style="height:1px; background:var(--border-color); margin:5px 0;">
+                    </div>
+
+                    <a href="/" class="dropdown-item danger"
+                        onclick="localStorage.removeItem('socialSpaceUser'); location.reload();">
+                        <i class="ph ph-sign-out"></i> Sign Out
+                    </a>
+                </div>
+            </div>
         </div>
     </nav>
 
@@ -310,22 +334,3 @@
 </body>
 
 </html>
-<div id="chatbot-trigger">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-</div>
-
-<div class="chat-window" id="chat-window">
-    <div class="chat-header-ai">
-        <div class="ai-status-dot"></div>
-        <div style="font-weight: 600;">System Intelligence</div>
-    </div>
-    <div class="chat-messages" id="chat-messages">
-        <div class="message ai">Hello! I'm your AI assistant. How can I help you with your dashboard today?</div>
-    </div>
-    <div class="chat-input-area">
-        <input type="text" id="user-input" placeholder="Ask anything...">
-        <button class="send-btn" id="send-msg">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-        </button>
-    </div>
-</div>
