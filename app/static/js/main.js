@@ -131,6 +131,15 @@ function finishAuth() {
     setTimeout(() => {
         overlay.style.display = 'none';
         initDashboard();
+
+        // Update Profile Name
+        const usernameInput = document.getElementById('username');
+        const username = (usernameInput && usernameInput.value) ? usernameInput.value : "Guest";
+        const navName = document.getElementById('nav-username-display');
+        const ddName = document.getElementById('dd-username-display');
+
+        if (navName) navName.innerText = username;
+        if (ddName) ddName.innerText = username;
     }, 500);
 }
 
@@ -763,5 +772,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sendBtn) sendBtn.onclick = sendMessage;
     if (userInput) {
         userInput.onkeypress = (e) => { if (e.key === 'Enter') sendMessage(); };
+    }
+});
+
+/* --- PROFILE DROPDOWN LOGIC --- */
+window.toggleProfileMenu = function () {
+    const dropdown = document.getElementById('profile-dropdown');
+    if (dropdown) dropdown.classList.toggle('show');
+};
+
+window.addEventListener('click', function (e) {
+    const container = document.getElementById('profile-trigger');
+    const dropdown = document.getElementById('profile-dropdown');
+
+    // If click is outside the container, hide the dropdown
+    if (dropdown && container && !container.contains(e.target)) {
+        dropdown.classList.remove('show');
     }
 });

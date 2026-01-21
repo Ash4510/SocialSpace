@@ -6,6 +6,7 @@
     <title>SocialSpace | Analytics Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <!-- Map Libraries -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap/dist/css/jsvectormap.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/jsvectormap/dist/js/jsvectormap.min.js"></script>
@@ -94,6 +95,43 @@
                 <li id="nav-reports" onclick="switchTab('reports')">Reports</li>
                 <li id="nav-audience" onclick="switchTab('audience')">Audience</li>
             </ul>
+
+            <div class="user-profile-container" id="profile-trigger">
+                <div class="user-info" onclick="toggleProfileMenu()">
+                    <span class="user-name" id="nav-username-display">Guest</span>
+
+                    <div class="nav-avatar-placeholder">
+                        <svg width="24" height="24" viewBox="0 0 24 24"
+                            style="display: block; width: 20px; height: 20px;">
+                            <path
+                                d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                        </svg>
+                    </div>
+
+                    <i class="ph ph-caret-down" style="color: #888; font-size: 12px;"></i>
+                </div>
+
+                <div class="profile-dropdown" id="profile-dropdown">
+                    <div class="dropdown-header">
+                        <p class="dd-name" id="dd-username-display">Guest</p>
+                    </div>
+
+                    <a href="#" class="dropdown-item">
+                        <i class="ph ph-gear"></i> Settings
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <i class="ph ph-question"></i> Help Center
+                    </a>
+
+                    <div class="dropdown-divider" style="height:1px; background:var(--border-color); margin:5px 0;">
+                    </div>
+
+                    <a href="/" class="dropdown-item danger"
+                        onclick="localStorage.removeItem('socialSpaceUser'); location.reload();">
+                        <i class="ph ph-sign-out"></i> Sign Out
+                    </a>
+                </div>
+            </div>
         </div>
     </nav>
 
