@@ -136,7 +136,57 @@ def get_data():
             {"name": "GameMasterX", "niche": "Gaming", "match": 88, "followers": "180K", "img": "https://api.dicebear.com/7.x/avataaars/svg?seed=GameMasterX"},
             {"name": "DailyGadgets", "niche": "Tech Review", "match": 82, "followers": "320K", "img": "https://api.dicebear.com/7.x/avataaars/svg?seed=DailyGadgets"},
             {"name": "CodeLife", "niche": "Development", "match": 78, "followers": "95K", "img": "https://api.dicebear.com/7.x/avataaars/svg?seed=CodeLife"}
-        ]
+        ],
+        "engagement_widget": {
+            "last_7d": {
+                "value": 7.2,
+                "status": "excellent",
+                "status_label": "Excellent",
+                "benchmark_text": "Top 5% vs peers",
+                "trend_value": 0.8,
+                "trend_dir": "up",
+                "trend_reason": "Reels drove growth",
+                "date_range": "Jan 08 - Jan 15, 2026",
+                "insight": "Engagement surged due to higher save rate on Tuesday's tech review.",
+                "action_hint": "→ Increase Reel frequency next week"
+            },
+            "last_30d": {
+                "value": 6.5,
+                "status": "good",
+                "status_label": "Healthy",
+                "benchmark_text": "Above average",
+                "trend_value": 1.2,
+                "trend_dir": "up",
+                "trend_reason": "Consistent posting",
+                "date_range": "Dec 15, 2025 - Jan 15, 2026",
+                "insight": "Steady growth maintained by consistent daily stories and carousel posts.",
+                "action_hint": "→ Experiment with evening posting times"
+            },
+            "last_90d": {
+                "value": 5.8,
+                "status": "average",
+                "status_label": "Average",
+                "benchmark_text": "Below Q4 peak",
+                "trend_value": 0.5,
+                "trend_dir": "down",
+                "trend_reason": "Lower reach",
+                "date_range": "Oct 15, 2025 - Jan 15, 2026",
+                "insight": "Slight dip observed due to reduced hashtag reach in November.",
+                "action_hint": "→ Refresh hashtag strategy"
+            },
+            "ytd": {
+                "value": 6.8,
+                "status": "good",
+                "status_label": "Great Start",
+                "benchmark_text": "On track",
+                "trend_value": 2.1,
+                "trend_dir": "up",
+                "trend_reason": "New format",
+                "date_range": "Jan 01 - Jan 15, 2026",
+                "insight": "Strong start driven by the new 'Code Tips' video series.",
+                "action_hint": "→ Double down on video content"
+            }
+        }
     }
     return jsonify(data)
 
@@ -158,3 +208,25 @@ def chat():
         "Try using trending audio to boost your Reach further."
     ]
     return jsonify({"response": random.choice(responses)})
+
+
+# --- VIRAL ALERTS & HEATMAP API ---
+
+@bp.route('/api/viral-status')
+def get_viral_status():
+    """
+    Check if the latest post is trending (1.2x) or viral (1.5x).
+    Returns severity level and engagement metrics.
+    """
+    status = data_service.check_viral_status()
+    return jsonify(status)
+
+
+@bp.route('/api/heatmap-data')
+def get_heatmap_data():
+    """
+    Return 7x24 grid of simulated active_users data for heatmap.
+    """
+    data = data_service.get_heatmap_data()
+    return jsonify(data)
+
