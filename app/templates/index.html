@@ -20,48 +20,14 @@
     <div id="auth-overlay" class="auth-overlay">
         <!-- Logo at the top -->
         <div id="step-login" class="auth-card">
-            <!-- Logo at the top -->
-            <div class="logo-container">
-                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="SocialSpace Logo" class="login-logo">
+            <div class="brand" style="position: static; margin-bottom: 20px; font-size: 2rem;">SocialSpace</div>
+            <h2>Welcome Back</h2>
+            <p>Login to access your creator insights</p>
+            <div class="input-group">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Password" required>
             </div>
-
-            <h2 class="login-title">Welcome</h2>
-            <p class="login-subtitle">Login to access your creator insights</p>
-
-            <div class="input-group floating-group">
-                <span class="input-icon">👤</span>
-                <input type="text" id="username" placeholder=" " required>
-                <label for="username">Username</label>
-                <span class="input-border-glow"></span>
-            </div>
-
-            <div class="input-group floating-group">
-                <span class="input-icon">🔒</span>
-                <input type="password" id="password" placeholder=" " required>
-                <label for="password">Password</label>
-                <span class="input-border-glow"></span>
-            </div>
-            <div class="auth-footer">
-                <button class="skip-btn" onclick="skipToDiscovery()">Skip</button>
-                <button id="btn-login" class="primary-btn" onclick="handleLogin()">Log in</button>
-            </div>
-        </div>
-
-
-        <div id="step-platform" class="auth-card" style="display: none;">
-            <h2>Select Platform</h2>
-            <p>Where do you create content?</p>
-
-            <div class="domain-grid">
-                <div class="domain-item" onclick="toggleDomain(this)">Instagram</div>
-                <div class="domain-item" onclick="toggleDomain(this)">YouTube</div>
-                <div class="domain-item" onclick="toggleDomain(this)">X</div>
-                <div class="domain-item" onclick="toggleDomain(this)">TikTok</div>
-            </div>
-
-            <div class="auth-footer">
-                <button class="primary-btn" onclick="goToDomainSelection()">Next</button>
-            </div>
+            <button class="primary-btn" onclick="goToOnboarding()">Next</button>
         </div>
 
         <div id="step-onboarding" class="auth-card" style="display: none;">
@@ -307,7 +273,8 @@
                         <span>Less</span>
                         <div class="legend-dots">
                             <span class="l-dot"></span><span class="l-dot"></span>
-                            <span class="l-dot active"></span><span class="l-dot active"></span>
+                            <span class="l-dot"></span><span class="l-dot"></span>
+                            <span class="l-dot"></span>
                         </div>
                         <span>More</span>
                     </div>
@@ -367,29 +334,3 @@
 </body>
 
 </html>
-<div id="chatbot-trigger">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"
-        stroke-linejoin="round">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-    </svg>
-</div>
-
-<div class="chat-window" id="chat-window">
-    <div class="chat-header-ai">
-        <div class="ai-status-dot"></div>
-        <div style="font-weight: 600;">System Intelligence</div>
-    </div>
-    <div class="chat-messages" id="chat-messages">
-        <div class="message ai">Hello! I'm your AI assistant. How can I help you with your dashboard today?</div>
-    </div>
-    <div class="chat-input-area">
-        <input type="text" id="user-input" placeholder="Ask anything...">
-        <button class="send-btn" id="send-msg">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.5"
-                stroke-linecap="round" stroke-linejoin="round">
-                <line x1="22" y1="2" x2="11" y2="13"></line>
-                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-            </svg>
-        </button>
-    </div>
-</div>
